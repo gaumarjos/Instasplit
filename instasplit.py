@@ -21,7 +21,8 @@ if __name__ == '__main__':
 
     new_width = tile_width * n_tiles
     new_height = new_width / width * height
-    print(new_width, new_height)
+    print("Size of resized full image: {}, {}".format(int(new_width), int(new_height)))
+    print("Size of each tile: {}, {}".format(int(tile_width), int(new_height)))
 
     if new_width > width:
         print("You're trying to enlarge the image, bad idea.")
