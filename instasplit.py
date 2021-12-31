@@ -3,11 +3,10 @@ import argparse
 import os
 
 if __name__ == '__main__':
-
-    parser = argparse.ArgumentParser(description="An addition program")
-    parser.add_argument("f", nargs=1, metavar="str", type=str,
+    parser = argparse.ArgumentParser(description="A program to split panorama images in multiple horizontal tiles to post on Instagram.")
+    parser.add_argument("f", nargs=1, metavar="file", type=str,
                         help="Input image.")
-    parser.add_argument("n", nargs=1, metavar="num", type=int,
+    parser.add_argument("n", nargs=1, metavar="n_tiles", type=int,
                         help="Number of images to be split into.")
     args = parser.parse_args()
 
