@@ -1,21 +1,16 @@
 from PIL import Image
 import argparse
 import os
+from glob import glob
 
 def scale(im, tile_size = 1080):
     width, height = im.size
-    print("old size {} x {} (ratio: {})".format(width, height, 1. * height / width))
-
-    # Make the image square by adding white padding
     if width >= height:
         height = int(height / width * tile_size)
         width = tile_size
     else:
         width = int(width / height * tile_size)
         height = tile_size
-
-    print("new size {} x {} (ratio: {})".format(width, height, 1. * height / width))
-
     im = im.resize((width, height), Image.LANCZOS)
     return im
 
@@ -23,22 +18,14 @@ def make_square(im, colour='white', tile_size = 1080):
     colours = {'white': 255, 'black': 0}
     fill = colours[colour]
     x, y = im.size
-    sq_im = Image.new('RGB', (tile_size, tile_size), (fill, fill, fill))
-    sq_im.paste(im, (int((tile_size - x) / 2), int((tile_size - y) / 2)))
+    if x == y:
+        sq_im = im
+    else:
+        sq_im = Image.new('RGB', (tile_size, tile_size), (fill, fill, fill))
+        sq_im.paste(im, (int((tile_size - x) / 2), int((tile_size - y) / 2)))
     return sq_im
 
-
-def main():
-    parser = argparse.ArgumentParser(description="A program to split panorama images in multiple horizontal tiles to post on Instagram.")
-    parser.add_argument("f", nargs=1, metavar="file", type=str,
-                        help="Input image.")
-    parser.add_argument("n", nargs=1, metavar="n_tiles", type=int,
-                        help="Number of images to be split into.")
-    args = parser.parse_args()
-    n_tiles = int(args.n[0])
-    filename = args.f[0]
-
-    tile_size = 1080
+def process_image(filename, n_tiles, tile_size=1080):
     im = Image.open(filename)
     width, height = im.size
 
@@ -70,6 +57,19 @@ def main():
             sq_tile = make_square(tile)
             sq_tile.save(os.path.splitext(filename)[0] + "_sq" + str(i) + ".jpg")
 
+
+def main():
+    parser = argparse.ArgumentParser(description="A program to split panorama images in multiple horizontal tiles to post on Instagram.")
+    parser.add_argument("f", nargs=1, metavar="file", type=str,
+                        help="Input image.")
+    parser.add_argument("n", nargs=1, metavar="n_tiles", type=int,
+                        help="Number of images to be split into.")
+    args = parser.parse_args()
+    filelist = glob(args.f[0])
+    n_tiles = int(args.n[0])
+
+    for filename in filelist:
+        process_image(filename, n_tiles)
 
 if __name__ == '__main__':
     main()
